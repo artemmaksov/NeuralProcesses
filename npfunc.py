@@ -70,6 +70,23 @@ def posterior_predict(x, y, x_star_value, dim_h_hidden, dim_g_hidden, dim_r, dim
     y_star = decoder_g(z_sample, x_star, dim_g_hidden)
     
     return y_star 
+
+#prediction from eps values 
+def prior_predict(x_star, dim_g_hidden, dim_z, epsilon = None, n_draws = 1):
+    N_star = x_star.shape[0]
+    x_star_tf = tf.constant(x_star, dtype=tf.float32 )
+    
+    if( epsilon == None):
+        epsilon = tf.random_normal(shape=(n_draws, dim_z))
+        
+        
+    z_sample = epsilon
+    
+    y_star = decoder_g(z_sample, x_star, dim_g_hidden)
+    
+    return y_star 
+	
+	
 	
 
 #initialize NP
