@@ -17,7 +17,7 @@ def np_iteration(x_data, y_data, x_context, y_context, x_target, y_target, sess,
     Outputs: Training operation and loss a
     """
     
-	#select N context points 
+    #select N context points 
     N = np.random.randint(low=2, high=x_data.shape[0]+1 ) 
     #x_c_id = np.random.randint(low=0, high=x_data.shape[0], size=N)
     x_c_id = np.random.choice(x_data.shape[0], size =N)
@@ -33,7 +33,22 @@ def np_iteration(x_data, y_data, x_context, y_context, x_target, y_target, sess,
 	
 def sample_curves(x_data, y_data, x_t, dim_h_hidden, dim_g_hidden, 
                   dim_r, dim_z,sess, epsilon_std=None, n_draws=1, act_f=tf.nn.sigmoid):
+
+				  
+    """ Sample the parameter space x_t using known coordinates x_data and values y_data. 
     
+    Takes in:
+    Parameters of the NP model: dim_h_hidden, dim_g_hidden, dim_r, dim_z, act_f
+    Session: sess 
+    Std of epsilon: epsilon_std
+    Number of function samples to produce: n_draws
+    
+    Outputs:
+    Sampled functions: y_star_mat 
+    Mean: y_star_mean
+    STD: y_star_sigma
+    """ 
+	
     #generate epsilon for sampling 
     if epsilon_std == None :
         eps =  tf.random_normal(shape=(n_draws, dim_z) , stddev = 1.0 )
