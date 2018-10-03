@@ -2,21 +2,6 @@ import numpy as np
 import tensorflow as tf
 
 #encoder architecture 
-def h_encoder(inputs, dim_h_hidden, dim_r, act_f):
-
-
-
-	with tf.variable_scope("encoder", reuse=tf.AUTO_REUSE):
-		l1 = tf.layers.dense(inputs= inputs, units=dim_h_hidden[0], activation=act_f, name="encoder_layer_0", reuse=tf.AUTO_REUSE)
-		#l1 = tf.layers.dense(inputs= inputs, units=dim_h_hidden[0], activation='relu', name="encoder_layer_0", reuse=tf.AUTO_REUSE)
-
-		if len(dim_h_hidden) > 1:
-			for i, size in enumerate(dim_h_hidden[1:]):
-				l1 = tf.layers.dense(inputs=l1, units=size, activation=act_f, name="encoder_layer_{}".format(i+1))
-				#l1 = tf.layers.dense(inputs=l1, units=size, activation='relu', name="encoder_layer_{}".format(i+1))
-		l2 = tf.layers.dense(inputs = l1, units=dim_r, name="encoder_layer_last", reuse=tf.AUTO_REUSE)
-    
-	return l2
 	
 def np_encoder(x, y, dim_h_hidden, dim_r, dim_z, act_f):
 
@@ -25,32 +10,21 @@ def np_encoder(x, y, dim_h_hidden, dim_r, dim_z, act_f):
 
 	with tf.variable_scope("encoder", reuse=tf.AUTO_REUSE):
 		l1 = tf.layers.dense(inputs= inputs, units=dim_h_hidden[0], activation=act_f, name="encoder_layer_0", reuse=tf.AUTO_REUSE)
-		#l1 = tf.layers.dense(inputs= inputs, units=dim_h_hidden[0], activation='relu', name="encoder_layer_0", reuse=tf.AUTO_REUSE)
 
 		if len(dim_h_hidden) > 1:
 			for i, size in enumerate(dim_h_hidden[1:]):
 				l1 = tf.layers.dense(inputs=l1, units=size, activation=act_f, name="encoder_layer_{}".format(i+1))
-				#l1 = tf.layers.dense(inputs=l1, units=size, activation='relu', name="encoder_layer_{}".format(i+1))
+
 		l2 = tf.layers.dense(inputs = l1, units=dim_r, name="encoder_layer_last", reuse=tf.AUTO_REUSE)
     
-	#return l2
-	
-		r = aggregate_r(l2)
+		r = tf.reduce_mean(l2, axis=0)
+		r = tf.reshape(r, shape=(1, -1))
+		
+		
 		mu = tf.layers.dense(inputs=r, units=dim_z, name="z_params_mu", reuse=tf.AUTO_REUSE)
 		sigma = tf.nn.softplus(tf.layers.dense(inputs=r, units=dim_z, name="z_params_sigma", reuse=tf.AUTO_REUSE))
 		
 	return mu, sigma 
-	
-	
-	
-	
-
-
-#aggregator for r ~ average 
-def aggregate_r(inputs):
-    l = tf.reduce_mean(inputs, axis=0)
-    l2 = tf.reshape(l, shape=(1, -1))
-    return l2
 	
 	
 #decoder g 
@@ -100,3 +74,6 @@ def decoder_g(z_sample, x_star, dim_g_hidden, act_f, noise_sd = 0.05):
 	
 
     return mu_star, sigma_star 
+	
+	
+	

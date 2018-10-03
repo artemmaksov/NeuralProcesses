@@ -1,16 +1,8 @@
 import numpy as np
 import tensorflow as tf
-from nparc1 import h_encoder, aggregate_r, decoder_g, np_encoder
+from nparc1 import decoder_g, np_encoder
 
 #following the R code by Kaspar Martens https://github.com/kasparmartens/NeuralProcesses
-
-
-#return Z sampling from input r 
-# def get_z_params(inputs_r, dim_z):
-    # mu = tf.layers.dense(inputs=inputs_r, units=dim_z, name="z_params_mu", reuse=tf.AUTO_REUSE)
-    # sigma = tf.nn.softplus(tf.layers.dense(inputs=inputs_r, units=dim_z, name="z_params_sigma", reuse=tf.AUTO_REUSE))
-    
-    # return mu, sigma
 	
 #compute the probability of y_star data belonging to 
 #a gaussian with y_pred_mu center and y_pred sigma scale 
@@ -79,16 +71,6 @@ def distBD(mu_q, sigma_q, mu_p, sigma_p):
 	
     return bd
 	
-#mapping xy to z
-# def map_xy_to_z_params(x, y, dim_h_hidden, dim_r, dim_z, act_f):
-    
-    # xy = tf.concat([x, y], axis= 1 )#, name = "NP_xy")
-    # h = h_encoder(xy, dim_h_hidden, dim_r, act_f)
-    # r = aggregate_r(h)
-    # z_mu, z_sigma = get_z_params(r, dim_z)
-    
-    # return z_mu, z_sigma	
-	
 
 #prediction
 def posterior_predict(x, y, x_star_value, dim_h_hidden, dim_g_hidden, dim_r, dim_z, epsilon = None , n_draws = 1, act_f = tf.nn.sigmoid):
@@ -132,15 +114,16 @@ def prior_predict(x_star, dim_g_hidden, dim_z, epsilon = None, n_draws = 1):
 def init_NP(x_context, y_context, x_target, y_target, dim_h_hidden, dim_g_hidden, dim_r, dim_z, elbo, noise_sd = 0.05, lr = 0.001, act_f = tf.nn.sigmoid):
     
     #concatenate context and target
-	x_all = tf.concat( [x_context, x_target], axis=0) #, name = "NP_x_all" )
-	y_all = tf.concat( [y_context, y_target], axis=0) #, name = "NP_y_all")
+	#x_all = tf.concat( [x_context, x_target], axis=0) #, name = "NP_x_all" )
+	#y_all = tf.concat( [y_context, y_target], axis=0) #, name = "NP_y_all")
     
     #map input to z
 	#z_context_mu, z_context_sigma = map_xy_to_z_params(x_context, y_context, dim_h_hidden, dim_r, dim_z, act_f)
 	#z_all_mu, z_all_sigma = map_xy_to_z_params(x_all, y_all, dim_h_hidden, dim_r, dim_z, act_f)
 	
 	z_context_mu, z_context_sigma = np_encoder(x_context, y_context, dim_h_hidden, dim_r, dim_z, act_f)
-	z_all_mu, z_all_sigma = np_encoder(x_all, y_all, dim_h_hidden, dim_r, dim_z, act_f)	
+	#z_all_mu, z_all_sigma = np_encoder(x_all, y_all, dim_h_hidden, dim_r, dim_z, act_f)	
+	z_all_mu, z_all_sigma = np_encoder(x_target, y_target, dim_h_hidden, dim_r, dim_z, act_f)	
     
     #sample z= mu + sigma*eps
 	epsilon = tf.random_normal(shape=(7, dim_z))#, mean=0.0, stddev=1.0)    
@@ -167,7 +150,9 @@ def init_NP(x_context, y_context, x_target, y_target, dim_h_hidden, dim_g_hidden
 	
 	
 
-
+#define gaussian activation function 
+def g_act(x):
+	return tf.exp(tf.negative( tf.square(x) ) )
     
 
 
