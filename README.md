@@ -1,5 +1,4 @@
-# neural-processes-py-tf
+# Optimization with Neural Processes 
 
-An implementation of Neural Processes paper in python/tensorflow.
+An implementation of Neural Processes in python/tensorflow combined with Bayesian optimization. 
 
-NPsin is fitting a sin(x) function based on R code by Kaspar Martens: https://github.com/kasparmartens/NeuralProcesses
