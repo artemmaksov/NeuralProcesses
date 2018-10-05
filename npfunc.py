@@ -1,5 +1,6 @@
 import numpy as np
 import tensorflow as tf
+import tensorflow_probability as tfp
 from nparc1 import decoder_g, np_encoder
 
 #following the R code by Kaspar Martens https://github.com/kasparmartens/NeuralProcesses
@@ -21,7 +22,8 @@ def loglikelihood1(y_star, y_pred_mu, y_pred_sigma):
 def loglikelihood2(y_star, y_pred_mu, y_pred_sigma):
     
     #p_normal = tf.distributions.Normal(loc= y_pred_mu, scale=tf.square(y_pred_sigma))
-    p_normal = tf.distributions.Normal(loc= y_pred_mu, scale=y_pred_sigma) 
+    p_normal = tfp.distributions.Normal(loc = y_pred_mu, scale=y_pred_sigma)
+    #p_normal = tf.distributions.Normal(loc= y_pred_mu, scale=y_pred_sigma) 
     #p_normal = tf.distributions.Normal(loc= y_pred_mu, scale=tf.exp(y_pred_sigma)) 	
     loglik = p_normal.log_prob(y_star)
     loglik = tf.reduce_mean(loglik, axis=0) #changed to mean from sum to adjust for getting new data
