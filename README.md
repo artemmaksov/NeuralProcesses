@@ -1,8 +1,4 @@
----
-layout: home
----
-
-# Optimization with Neural Processes
+# Neural Processes
 
 An implementation of [Neural Processes](https://arxiv.org/abs/1807.01622) paper in Python/Tensorflow.
 
