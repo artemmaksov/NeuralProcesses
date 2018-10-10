@@ -11,7 +11,7 @@ def plot_np_fit_1d(x_t, y_t, x_data, y_data, y_star_mean, y_star_sigma, u_scale=
     Plots the observed data, posterior fit, and uncertainty of prediction.
     """
     fig = plt.figure(fignum)
-    plt.plot(x_t, y_t, 'r:', label=u'$f(x) = \sin(x)$')
+    plt.plot(x_t, y_t, 'r:', label='$f(x)$')
     plt.plot(x_data[0:-2], y_data[0:-2], 'r.', markersize=10, label='Observations')
     plt.plot(x_t, y_star_mean, 'b-')
 
